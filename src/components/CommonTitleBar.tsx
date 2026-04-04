@@ -19,8 +19,6 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { moderateScale } from "react-native-size-matters";
-import { PrinterStatusIndicator } from "./PrinterStatusIndicator";
-import SyncIndicator from "./SyncIndicator";
 
 interface TCommonTyitleBar {
   mobileTitle?: string;
@@ -44,6 +42,7 @@ export default function CommonTitleBar(extraProps: TCommonTyitleBar) {
       <CustomTitleBar
         // On tablet: remove horizontal padding so the logo container can
         // manually match the rail width and sit flush with the rail below.
+        showBorder={isTablet ? true : false}
         paddingHorizontal={isTablet ? 0 : undefined}
         height={isTablet ? undefined : moderateScale(40)}
         leftPart={
@@ -79,7 +78,7 @@ export default function CommonTitleBar(extraProps: TCommonTyitleBar) {
                     left: isTablet ? "45%" : "50%",
                     bottom: isTablet ? "40%" : "50%",
                     marginLeft: moderateScale(12),
-                    color: colors.textColor,
+                    color: colors.textPrimary,
                     fontSize: isTablet
                       ? moderateScale(15, 0.01)
                       : TITLE_CONFIG.HeaderFontSize,
@@ -87,7 +86,7 @@ export default function CommonTitleBar(extraProps: TCommonTyitleBar) {
                     width: moderateScale(55),
                   }}
                 >
-                  Bebosha
+                  {t("app.medha")}
                 </StyledText>
               </View>
             </View>
@@ -107,11 +106,11 @@ export default function CommonTitleBar(extraProps: TCommonTyitleBar) {
                     <Feather
                       name="arrow-left"
                       size={moderateScale(24)}
-                      color={colors.textColor}
+                      color={colors.textPrimary}
                     />
                     <StyledText
                       style={{
-                        color: colors.textColor,
+                        color: colors.textPrimary,
                         fontSize: TITLE_CONFIG.HeaderFontSize,
                         fontWeight: "bold",
                       }}
@@ -123,12 +122,12 @@ export default function CommonTitleBar(extraProps: TCommonTyitleBar) {
               ) : (
                 <StyledText
                   style={{
-                    color: colors.textColor,
+                    color: colors.textPrimary,
                     fontSize: TITLE_CONFIG.HeaderFontSize,
                     fontWeight: "bold",
                   }}
                 >
-                  Bebosha
+                  {t("app.medha")}
                 </StyledText>
               )}
             </View>
@@ -145,13 +144,13 @@ export default function CommonTitleBar(extraProps: TCommonTyitleBar) {
                 justifyContent: "center",
               }}
             >
-              <SyncIndicator
+              {/* <SyncIndicator
                 onPress={() => router.push({ pathname: "/(othersPage)/sync" })}
-              />
-              <PrinterStatusIndicator
+              /> */}
+              {/* <PrinterStatusIndicator
                 size={0.85}
                 onPress={() => router.push({ pathname: "/(tab)/setting" })}
-              />
+              /> */}
               <TouchableOpacity
                 onPress={() => router.push({ pathname: "/(tab)/profile" })}
               >
@@ -167,7 +166,7 @@ export default function CommonTitleBar(extraProps: TCommonTyitleBar) {
                 <AntDesign
                   name="align-right"
                   size={moderateScale(24)}
-                  color={colors.textColor}
+                  color={colors.textPrimary}
                 />
               </TouchableOpacity>
             </View>
@@ -182,10 +181,10 @@ export default function CommonTitleBar(extraProps: TCommonTyitleBar) {
                 marginRight: moderateScale(10),
               }}
             >
-              <PrinterStatusIndicator
+              {/* <PrinterStatusIndicator
                 size={0.55}
                 onPress={() => router.push({ pathname: "/(tab)/setting" })}
-              />
+              /> */}
             </View>
           )
         }

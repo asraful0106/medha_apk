@@ -5,6 +5,22 @@ import { initReactI18next } from "react-i18next";
 export const resources = {
   en: {
     translation: {
+      app: {
+        MEDHA: "MEDHA",
+        medha: "Medha",
+        tagline: "Learn smarter, anytime, anywhere.",
+        TAGLINE: "LEARN SMARTER, ANYTIME, ANYWHERE.",
+      },
+      indexs: {
+        home: "Home",
+        rank: "Rank",
+        content: "Content",
+        courses: "Courses",
+        profile: "Profile",
+        notification: "Notification",
+        calender: "Calender",
+        setting: "Setting",
+      },
       setup: {
         step: "Step {{current}} of {{total}}",
         next: "Continue",
@@ -47,6 +63,22 @@ export const resources = {
 
   bn: {
     translation: {
+      app: {
+        MEDHA: "মেধা",
+        medha: "মেধা",
+        tagline: "আরও স্মার্টভাবে শিখুন, যেকোনো সময়, যেকোনো জায়গায়।",
+        TAGLINE: "আরও স্মার্টভাবে শিখুন, যেকোনো সময়, যেকোনো জায়গায়।",
+      },
+      indexs: {
+        home: "হোম",
+        rank: "র‍্যাঙ্ক",
+        content: "কনটেন্ট",
+        courses: "কোর্সসমূহ",
+        profile: "প্রোফাইল",
+        notification: "নোটিফিকেশন",
+        calender: "ক্যালেন্ডার",
+        setting: "সেটিংস",
+      },
       setup: {
         step: "ধাপ {{current}} / {{total}}",
         next: "পরবর্তী",

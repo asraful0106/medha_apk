@@ -1,19 +1,23 @@
 import React, { useRef, useEffect } from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
+import { View, Animated } from "react-native";
 import LottieView from "lottie-react-native";
+import { useTranslation } from "react-i18next";
+import { moderateScale, ScaledSheet } from "react-native-size-matters";
 
 interface Props {
   onFinish: () => void;
 }
 
 export default function SplashScreen({ onFinish }: Props) {
+  const { t } = useTranslation();
+
   const titleOpacity = useRef(new Animated.Value(0)).current;
   const tagOpacity = useRef(new Animated.Value(0)).current;
   const titleY = useRef(new Animated.Value(14)).current;
   const tagY = useRef(new Animated.Value(14)).current;
 
   useEffect(() => {
-    Animated.sequence([
+    const animation = Animated.sequence([
       Animated.delay(800),
       Animated.parallel([
         Animated.timing(titleOpacity, {
@@ -41,12 +45,18 @@ export default function SplashScreen({ onFinish }: Props) {
         }),
       ]),
       Animated.delay(1400),
-    ]).start(onFinish);
+    ]);
+
+    animation.start(onFinish);
+
+    return () => {
+      animation.stop();
+    };
   }, []);
 
   return (
     <View style={styles.container}>
-      {/* lost space Lottie */}
+      {/* Top Lottie */}
       <LottieView
         source={require("@/assets/animations/lost_space.json")}
         autoPlay
@@ -60,7 +70,7 @@ export default function SplashScreen({ onFinish }: Props) {
           { opacity: titleOpacity, transform: [{ translateY: titleY }] },
         ]}
       >
-        LUMIS
+        {t("app.MEDHA")}
       </Animated.Text>
 
       <Animated.Text
@@ -69,10 +79,10 @@ export default function SplashScreen({ onFinish }: Props) {
           { opacity: tagOpacity, transform: [{ translateY: tagY }] },
         ]}
       >
-        YOUR DAILY LIGHT
+        {t("app.TAGLINE")}
       </Animated.Text>
 
-      {/*lodaing Lottie */}
+      {/* Bottom Loader */}
       <LottieView
         source={require("@/assets/animations/loading.json")}
         autoPlay
@@ -83,36 +93,40 @@ export default function SplashScreen({ onFinish }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05080F",
+    backgroundColor: "#F5F7FF",
     alignItems: "center",
     justifyContent: "center",
   },
   rings: {
-    width: 220,
-    height: 20,
-    marginBottom: 28,
+    width: moderateScale(220),
+    height: moderateScale(220),
+    marginBottom: moderateScale(28),
   },
   appName: {
-    fontSize: 32,
+    fontSize: moderateScale(32, 0.01),
     fontWeight: "700",
-    letterSpacing: 12,
-    color: "#000000",
-    zIndex: 999
+    letterSpacing: moderateScale(12),
+    color: "#1E1B4B",
+
+    width: "100%",
+    textAlign: "center",
   },
   tagline: {
-    fontSize: 11,
-    letterSpacing: 6,
-    color: "#E8B84B",
-    marginTop: 10,
-    fontFamily: "System",
+    fontSize: moderateScale(11, 0.01),
+    letterSpacing: moderateScale(6),
+    color: "#4F46E5",
+    marginTop: moderateScale(10),
+
+    width: "100%",
+    textAlign: "center",
   },
   loader: {
     position: "absolute",
-    bottom: 80,
-    width: 200,
-    height: 100,
+    bottom: moderateScale(80),
+    width: moderateScale(200),
+    height: moderateScale(100),
   },
 });

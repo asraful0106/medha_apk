@@ -311,11 +311,11 @@ export function AdaptiveNavigation({
               : (options.title ?? route.name));
 
           const iconColor = isFocused
-            ? colors.navigation.active
-            : colors.navigation.inactive;
+            ? colors.nav.active.icon
+            : colors.nav.inactive.icon;
           const labelColor = isFocused
-            ? colors.navigation.active
-            : colors.navigation.inactive;
+            ? colors.nav.active.label
+            : colors.nav.inactive.label;
 
           const showLabel = isTablet ? showLabelsOnTablet : showLabelsOnMobile;
 
@@ -343,7 +343,7 @@ export function AdaptiveNavigation({
               label={label}
               showLabel={showLabel}
               navItem={navItem}
-              pillColor={colors.navigation.activePill}
+              pillColor={colors.tabPill.active.bg}
               styles={styles}
             />
           );
@@ -365,19 +365,19 @@ export function AdaptiveNavigation({
                 isTablet={isTablet}
                 iconColor={
                   isExtraFocused
-                    ? colors.navigation.active
-                    : colors.navigation.inactive
+                    ? colors.nav.active.icon
+                    : colors.nav.inactive.icon
                 }
                 iconSize={iconSize}
                 labelColor={
                   isExtraFocused
-                    ? colors.navigation.active
-                    : colors.navigation.inactive
+                    ? colors.nav.active.icon
+                    : colors.nav.inactive.icon
                 }
                 label={navItem.label ?? navItem.routeName}
                 showLabel={showLabelsOnTablet}
                 navItem={navItem}
-                pillColor={colors.navigation.activePill}
+                pillColor={colors.tabPill.active.icon}
                 styles={styles}
                 onPress={() => {
                   setActiveExtraRoute(navItem.routeName);
@@ -540,14 +540,14 @@ function createStyles(
             alignItems: "center",
             // space-between pushes topGroup to top and bottomGroup to bottom
             justifyContent: "space-between",
-            backgroundColor: colors.navigation.background,
+            backgroundColor: colors.bottomNavBg,
             borderTopWidth: 0,
             borderBottomWidth: 0,
             borderLeftWidth:
               railSide === "right" ? StyleSheet.hairlineWidth : 0,
             borderRightWidth:
               railSide === "left" ? StyleSheet.hairlineWidth : 0,
-            borderColor: colors.navigation.border,
+            borderColor: colors.bottomNavBorder,
             ...Platform.select({
               ios: {},
               android: {},
@@ -559,9 +559,9 @@ function createStyles(
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-around",
-            backgroundColor: colors.navigation.background,
+            backgroundColor: colors.bottomNavBg,
             borderTopWidth: StyleSheet.hairlineWidth,
-            borderTopColor: colors.navigation.border,
+            borderTopColor: colors.bottomNavBorder,
             ...Platform.select({
               ios: {
                 shadowColor: "#000",

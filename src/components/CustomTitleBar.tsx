@@ -171,10 +171,10 @@ function createStyles(
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      backgroundColor: bgColor ?? colors.bodyBackground,
+      backgroundColor: bgColor ?? colors.background,
       // Bottom border — on by default for visual separation from content/rail
       borderBottomWidth: showBorder ? StyleSheet.hairlineWidth : 0,
-      borderBottomColor: colors.navigation?.border ?? "rgba(0,0,0,0.1)",
+      borderBottomColor: colors.titleBarBorder,
     } as ViewStyle,
 
     left: {

@@ -103,8 +103,7 @@ function SetupGate({ colors, config }: SetupGateProps) {
   // Normal app flow
   return (
     <>
-      <SplashScreen onFinish={() => setIsSplashFinish(true)}/>
-      {/* <Stack
+      <Stack
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: colors.background },
@@ -113,7 +112,7 @@ function SetupGate({ colors, config }: SetupGateProps) {
         <Stack.Screen name="(tab)" />
         <Stack.Screen name="(othersPage)" />
       </Stack>
-      <StatusBar style={config.style} backgroundColor={colors.background} /> */}
+      <StatusBar style={config.style} backgroundColor={colors.background} />
     </>
   );
 }

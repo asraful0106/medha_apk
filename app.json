@@ -40,7 +40,9 @@
           }
         }
       ],
-      "expo-audio"
+      "expo-audio",
+      "./withTabletFullscreen",
+      "./withBluetoothPermissions"
     ],
     "experiments": {
       "typedRoutes": true,

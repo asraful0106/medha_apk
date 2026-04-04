@@ -245,9 +245,9 @@ export function CustomAlertProvider({
     (a) => a.style !== "cancel" && a.style !== "destructive",
   );
 
-  const bgCard = isDark ? colors.secondBackgroundColor : colors.bodyBackground;
-  const textMain = colors.textColor;
-  const textSub = colors.secondaryTextColor;
+  const bgCard = colors.primaryCard;
+  const textMain = colors.textPrimary;
+  const textSub = colors.textSecondary;
   const border = colors.cardBorderColor;
 
   return (

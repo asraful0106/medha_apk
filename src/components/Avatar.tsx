@@ -34,7 +34,7 @@ const Avatar: React.FC<AvatarProps> = ({
 
   const imageSource = useMemo(() => {
     if (imageUrl) return { uri: imageUrl };
-    return require("@/assets/images/default-avatar.jpeg");
+    return require("@/assets/images/default-avatar.png");
   }, [imageUrl]);
 
   // Reset loading state when the image changes

@@ -77,7 +77,7 @@ export default function SafeScreen({
 
   return (
     <SafeAreaView
-      style={[{ flex: 1, backgroundColor: colors.bodyBackground }, style]}
+      style={[{ flex: 1, backgroundColor: colors.background }, style]}
       edges={resolvedEdges}
     >
       <View style={[{ flex: 1 }, contentStyle]}>{children}</View>

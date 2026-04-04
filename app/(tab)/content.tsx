@@ -1,18 +1,18 @@
 /**
- * @/app/(tabs)/index.tsx  (v3 — correct tablet layout)
+ *  @/app/(tabs)/content.tsx
  */
 
 import CommonTitleBar from "@/src/components/CommonTitleBar";
 import SafeScreen from "@/src/components/SafeScreen";
 import { BREAKPOINTS, NAV_CONFIG } from "@/src/constants/navTitleConfig";
 import { useTheme } from "@/src/hooks/theme/ThemeContext";
-import Home from "@/src/pages/home/Home";
+import Content from "@/src/pages/content/Content";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View, useWindowDimensions } from "react-native";
 import { moderateScale } from "react-native-size-matters";
 
-export default function IndexScreen() {
+export default function content() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
@@ -38,7 +38,7 @@ export default function IndexScreen() {
           padding: moderateScale(10),
         }}
       >
-        <Home />
+        <Content />
       </View>
     </SafeScreen>
   );

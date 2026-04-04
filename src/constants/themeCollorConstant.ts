@@ -1,32 +1,32 @@
-// @/src/constants/themeColorConstant.ts
-//
-// Design goals: Premium · Addictive · Achievement-driven · Easy to study
-// All text pairs are WCAG AA compliant (4.5:1 minimum).
-
 export const lightColors = {
-  // ─── Brand — Indigo (knowledge & focus) ────────────────────────────────
-  primaryColor: "#4F46E5", // main CTA, progress bars, active states
-  primaryHover: "#4338CA", // hover state
-  primaryLight: "#EEF2FF", // chip backgrounds, subtle fills
-  primaryCard: "#FAFBFF", // card surface — faint indigo tint, feels warm not clinical
+  primaryColor: "#4F46E5",
+  primaryHover: "#4338CA",
+  primaryLight: "#EEF2FF",
 
-  // ─── Secondary — Emerald (growth & progress) ────────────────────────────
+  primaryCard: "#FAFBFF",
+  cardBorderColor: "#DDE1F5",
+
+  cardSecondary: "#F0F4FF",
+  cardSecondaryBorder: "#C7D2FE",
+
+  cardThird: "#E8EDFB",
+  cardThirdBorder: "#A5B4FC",
+
+  cardPremium: "#EEF2FF",
+  cardPremiumBorder: "#4F46E5",
+
   secondaryColor: "#10B981",
   secondaryLight: "#D1FAE5",
 
-  // ─── Accent — Amber (streaks, fire, urgency) ────────────────────────────
   accent: "#F59E0B",
   accentLight: "#FEF3C7",
-  accentText: "#92400E", // text ON accentLight backgrounds — AA compliant
+  accentText: "#92400E",
 
-  // ─── Reward — Vivid Green (correct answers, XP pop, level-up burst) ────
-  // Kept separate from `success` so reward moments feel distinct from system states.
-  rewardColor: "#16A34A",
-  rewardLight: "#DCFCE7",
-  rewardText: "#15803D", // text ON rewardLight backgrounds
+  rewardColor: "#7C3AED",
+  rewardLight: "#EDE9FE",
+  rewardText: "#6D28D9",
 
-  // ─── System states ───────────────────────────────────────────────────────
-  success: "#22C55E", // form validation, completed states
+  success: "#22C55E",
   successLight: "#DCFCE7",
 
   error: "#EF4444",
@@ -37,9 +37,27 @@ export const lightColors = {
 
   info: "#0EA5E9",
   infoLight: "#F0F9FF",
-  infoText: "#0369A1", // text ON infoLight — AA compliant
+  infoText: "#0369A1",
 
-  // ─── Rank tiers (Bronze → Silver → Gold → Diamond) ──────────────────────
+  freeLesson: "#EEF2FF",
+  freeLessonBorder: "#C7D2FE",
+  freeLessonText: "#4338CA",
+
+  paidCourse: "#FFFBEB",
+  paidCourseBorder: "#F59E0B",
+  paidCourseText: "#92400E",
+
+  notificationBg: "#FAFBFF",
+  notificationBorder: "#DDE1F5",
+  notifDot: "#4F46E5",
+
+  calendarBg: "#F0FDF4",
+  calendarBorder: "#86EFAC",
+  calendarText: "#16A34A",
+
+  profileRing: "#4F46E5",
+  settingsBg: "#F5F7FF",
+
   rankBronze: "#CD7F32",
   rankBronzeLight: "#FEF3E2",
   rankBronzeText: "#92400E",
@@ -56,60 +74,89 @@ export const lightColors = {
   rankDiamondLight: "#ECFEFF",
   rankDiamondText: "#0E7490",
 
-  // ─── Neutral surfaces ───────────────────────────────────────────────────
-  background: "#F5F7FF", // page background
-  backgroundSecondary: "#FFFFFF", // modal, sheet surfaces
-  backgroundThird: "#EEF2FF", // subtle section fills
-  cardBorderColor: "#DDE1F5", // slightly richer than before — card edges visible
+  background: "#F5F7FF",
+  backgroundSecondary: "#FFFFFF",
+  backgroundThird: "#EEF2FF",
   border: "#DDE1F5",
   divider: "#E8EAF6",
   setupBizChipBg: "#EEF2FF",
 
-  // ─── Text ────────────────────────────────────────────────────────────────
-  // Contrast on white (#FFFFFF):
-  //   textPrimary   #1E1B4B → 14.8:1  ✓ AAA
-  //   textSecondary #4338CA →  5.6:1  ✓ AA   (was #6366F1 = 3.8:1 FAIL)
-  //   textThird     #6B7280 →  5.0:1  ✓ AA   (was #A5B4FC = 2.1:1 FAIL)
-  //   textDisabled  #9CA3AF →  2.9:1  decorative only — never use for readable labels
-  textPrimary: "#1E1B4B",
-  textSecondary: "#4338CA", // ← FIXED: was #6366F1
-  textThird: "#6B7280", // ← FIXED: was #A5B4FC — neutral gray for meta labels
-  textDisabled: "#9CA3AF", // decorative / placeholder only
+  bottomNavBg: "#FFFFFF",
+  bottomNavBorder: "#E8EAF6",
+  nav: {
+    active: {
+      icon: "#4F46E5",
+      label: "#4F46E5",
+      bg: "#EEF2FF",
+    },
+    inactive: {
+      icon: "#6B7280",
+      label: "#6B7280",
+      bg: "#FFFFFF",
+    },
+  },
+  tabPill: {
+    active: {
+      bg: "#EEF2FF",
+      border: "#C7D2FE",
+      icon: "#4F46E5",
+      label: "#4F46E5",
+    },
+    inactive: {
+      bg: "#FFFFFF",
+      border: "#E8EAF6",
+      icon: "#6B7280",
+      label: "#6B7280",
+    },
+  },
 
-  // ─── Special ─────────────────────────────────────────────────────────────
+  titleBarBg: "#FFFFFF",
+  titleBarBorder: "#E8EAF6",
+
+  textPrimary: "#1E1B4B",
+  textSecondary: "#4338CA",
+  textThird: "#6B7280",
+  textDisabled: "#9CA3AF",
+
   rankHighlight: "#F59E0B",
   progressBar: "#4F46E5",
   progressBarTrack: "#EEF2FF",
-  xpColor: "#16A34A", // XP number color in score cards
+  xpColor: "#16A34A",
 };
 
 export const darkColors = {
-  // ─── Brand ───────────────────────────────────────────────────────────────
-  primaryColor: "#818CF8",
-  primaryHover: "#A5B4FC",
+  primaryColor: "#6366F1",
+  primaryHover: "#4F46E5",
   primaryDim: "#1E1B4B",
-  primaryCard: "#13112B", // ← FIXED: was #1E1B4B — now clearly lifted from background
 
-  // ─── Secondary ───────────────────────────────────────────────────────────
+  primaryCard: "#13112B",
+  cardBorderColor: "#2A2660",
+
+  cardSecondary: "#1A1840",
+  cardSecondaryBorder: "#343080",
+
+  cardThird: "#0F0E24",
+  cardThirdBorder: "#1F1D3D",
+
+  cardPremium: "#1E1B4B",
+  cardPremiumBorder: "#4F46E5",
+
   secondaryColor: "#34D399",
   secondaryDim: "#064E3B",
 
-  // ─── Accent ──────────────────────────────────────────────────────────────
   accent: "#FBBF24",
-  accentDim: "#332B1A", // ← richer than #78350F — better card feel
+  accentDim: "#2D1E00",
   accentText: "#FBBF24",
 
-  // ─── Reward ──────────────────────────────────────────────────────────────
-  rewardColor: "#4ADE80",
-  rewardDim: "#052E16",
-  rewardText: "#4ADE80",
+  rewardColor: "#A78BFA",
+  rewardDim: "#1E1040",
+  rewardText: "#A78BFA",
 
-  // ─── System states ───────────────────────────────────────────────────────
   success: "#4ADE80",
-  successDim: "#14532D",
+  successDim: "#052E16",
 
   error: "#F87171",
-  errorDim: "#7F1D1D",
+  errorDim: "#3B0A0A",
 
   warning: "#FB923C",
   warningDim: "#431407",
@@ -118,7 +165,25 @@ export const darkColors = {
   infoDim: "#082F49",
   infoText: "#38BDF8",
 
-  // ─── Rank tiers ──────────────────────────────────────────────────────────
+  freeLesson: "#1E1B4B",
+  freeLessonBorder: "#2A2660",
+  freeLessonText: "#818CF8",
+
+  paidCourse: "#2D1E00",
+  paidCourseBorder: "#FBBF24",
+  paidCourseText: "#FBBF24",
+
+  notificationBg: "#13112B",
+  notificationBorder: "#1F1D3D",
+  notifDot: "#818CF8",
+
+  calendarBg: "#052E16",
+  calendarBorder: "#14532D",
+  calendarText: "#4ADE80",
+
+  profileRing: "#6366F1",
+  settingsBg: "#13112B",
+
   rankBronze: "#CD7F32",
   rankBronzeLight: "#2C1A0A",
   rankBronzeText: "#FDE68A",
@@ -135,29 +200,55 @@ export const darkColors = {
   rankDiamondLight: "#0C2A2F",
   rankDiamondText: "#67E8F9",
 
-  // ─── Neutral surfaces ─────────────────────────────────────────────────────
-  background: "#09091A", // ← FIXED: was #0F0E1A — deeper, cards now pop
-  backgroundSecondary: "#13112B",
+  background: "#09091A",
+  backgroundSecondary: "#0F0E24",
   backgroundThird: "#1E1B4B",
-  cardBorderColor: "#2A2660", // ← FIXED: was #312E81 — softer edge
   border: "#2A2660",
   divider: "#1F1D3D",
   setupBizChipBg: "#1E1B4B",
 
-  // ─── Text ─────────────────────────────────────────────────────────────────
-  // Contrast on #13112B (card surface):
-  //   textPrimary   #EEF2FF → 14.2:1  ✓ AAA
-  //   textSecondary #C7D2FE →  7.1:1  ✓ AA
-  //   textThird     #8B93C9 →  4.6:1  ✓ AA   (was #6366F1 on dark = 3.1:1 FAIL)
-  //   textDisabled  #6B73B0  →  2.7:1  decorative only
-  textPrimary: "#EEF2FF",
-  textSecondary: "#C7D2FE", // ← FIXED: was #A5B4FC
-  textThird: "#8B93C9", // ← FIXED: was #6366F1
-  textDisabled: "#6B73B0", // decorative / placeholder only
+  bottomNavBg: "#13112B",
+  bottomNavBorder: "#1F1D3D",
 
-  // ─── Special ─────────────────────────────────────────────────────────────
+  nav: {
+    active: {
+      icon: "#818CF8",
+      label: "#818CF8",
+      bg: "#1E1B4B",
+    },
+    inactive: {
+      icon: "#8B93C9",
+      label: "#8B93C9",
+      bg: "#13112B",
+    },
+  },
+
+  tabPill: {
+    active: {
+      bg: "#1E1B4B",
+      border: "#2A2660",
+      icon: "#818CF8",
+      label: "#818CF8",
+    },
+    inactive: {
+      bg: "#13112B",
+      border: "#1F1D3D",
+      icon: "#8B93C9",
+      label: "#8B93C9",
+    },
+  },
+
+  titleBarBg: "#13112B",
+  titleBarBorder: "#1F1D3D",
+
+  textPrimary: "#EEF2FF",
+  textSecondary: "#A5B4FC",
+  textThird: "#8B93C9",
+  textDisabled: "#4B5469",
+  textMuted: "#6B73B0",
+
   rankHighlight: "#FBBF24",
-  progressBar: "#818CF8",
+  progressBar: "#6366F1",
   progressBarTrack: "#2A2660",
   xpColor: "#4ADE80",
 };
