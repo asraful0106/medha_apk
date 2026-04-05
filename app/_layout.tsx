@@ -4,7 +4,10 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import { useTheme } from "@/src/hooks/theme/ThemeContext";
-import { LanguageProvider } from "@/src/hooks/language/LanguageContext";
+import {
+  LanguageProvider,
+  useLanguage,
+} from "@/src/hooks/language/LanguageContext";
 import { useEffect, useState, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CustomAlertProvider } from "@/src/components/CustomAlert";
@@ -57,6 +60,7 @@ function useSetupRequired() {
 // ─────────────────────────────────────────────────────────────────────────────
 function AppShell() {
   const { colors, config } = useTheme();
+  const { isHydrated } = useLanguage();
 
   const [fontsLoaded, fontError] = useFonts({
     SansFlex: require("../assets/fonts/SansFlex.ttf"),
@@ -64,12 +68,39 @@ function AppShell() {
     Noto: require("../assets/fonts/Noto.ttf"),
   });
 
+  // ✅ Minimum splash time (2s)
+  const [minTimePassed, setMinTimePassed] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMinTimePassed(true);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Optional: log font errors
+  useEffect(() => {
+    if (fontError) {
+      console.warn("Font loading error:", fontError);
+    }
+  }, [fontError]);
+
   useEffect(() => {
     soundService.init();
   }, []);
 
-  const isAppReady = Boolean(fontsLoaded && !fontError);
-  if (!isAppReady) return null;
+  const isAppReady = Boolean(isHydrated && fontsLoaded && !fontError);
+
+  const [isSplashAnimationFinised, setIsSplashAnimationFinised] =
+    useState<boolean>(false);
+
+  const canRenderApp = isAppReady && minTimePassed && isSplashAnimationFinised;
+
+  // ✅ Show custom splash until ready AND 2s elapsed
+  if (!canRenderApp) {
+    return <SplashScreen onFinish={() => setIsSplashAnimationFinised(true)} />;
+  }
 
   return <SetupGate colors={colors} config={config} />;
 }
@@ -85,7 +116,6 @@ interface SetupGateProps {
 
 function SetupGate({ colors, config }: SetupGateProps) {
   const { setupRequired, markSetupDone } = useSetupRequired();
-  const [ isSplashFinish, setIsSplashFinish ] = useState<boolean>(false);
 
   // Still reading AsyncStorage
   if (setupRequired === null) return null;
