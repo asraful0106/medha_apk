@@ -122,6 +122,9 @@ export const lightColors = {
   progressBar: "#4F46E5",
   progressBarTrack: "#EEF2FF",
   xpColor: "#16A34A",
+
+  // Coming Soon screen
+  comingSoonDot: "#4F46E5",
 };
 
 export const darkColors = {
@@ -251,6 +254,9 @@ export const darkColors = {
   progressBar: "#6366F1",
   progressBarTrack: "#2A2660",
   xpColor: "#4ADE80",
+
+  // Coming Soon screen
+  comingSoonDot: "#6366F1",
 };
 
 export const themes = {
