@@ -130,7 +130,7 @@ export const lightColors = {
 export const darkColors = {
   primaryColor: "#6366F1",
   primaryHover: "#4F46E5",
-  primaryDim: "#1E1B4B",
+  primaryLight: "#1E1B4B",
 
   primaryCard: "#13112B",
   cardBorderColor: "#2A2660",

@@ -19,6 +19,9 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { moderateScale } from "react-native-size-matters";
+import { NotificationIndicator } from "./NotificationIndicator";
+import { CalendarTaskIndicator } from "./CalendarTaskIndicator";
+import { UniversityInfoButton } from "./UniversityInfoButton";
 
 interface TCommonTyitleBar {
   mobileTitle?: string;
@@ -144,9 +147,9 @@ export default function CommonTitleBar(extraProps: TCommonTyitleBar) {
                 justifyContent: "center",
               }}
             >
-              {/* <SyncIndicator
-                onPress={() => router.push({ pathname: "/(othersPage)/sync" })}
-              /> */}
+              <UniversityInfoButton size={0.85} />
+              <CalendarTaskIndicator count={2} size={0.85} />
+              <NotificationIndicator count={12} size={0.85} />
               {/* <PrinterStatusIndicator
                 size={0.85}
                 onPress={() => router.push({ pathname: "/(tab)/setting" })}
@@ -181,10 +184,9 @@ export default function CommonTitleBar(extraProps: TCommonTyitleBar) {
                 marginRight: moderateScale(10),
               }}
             >
-              {/* <PrinterStatusIndicator
-                size={0.55}
-                onPress={() => router.push({ pathname: "/(tab)/setting" })}
-              /> */}
+              <UniversityInfoButton size={0.85} />
+              <CalendarTaskIndicator count={2} size={0.85} />
+              <NotificationIndicator count={12} size={0.85} />
             </View>
           )
         }
