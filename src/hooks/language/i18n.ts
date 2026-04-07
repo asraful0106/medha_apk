@@ -66,6 +66,11 @@ export const resources = {
         eta: "Expected",
         notify: "Notify Me When It's Ready",
       },
+      setting: {
+        generalSetting: "General Setting",
+        theme: "Theme",
+        language: "Language",
+      },
     },
   },
 
@@ -123,6 +128,11 @@ export const resources = {
         subtitle: "আমরা শেষ মুহূর্তের কাজগুলো সম্পন্ন করছি...",
         eta: "প্রত্যাশিত",
         notify: "প্রস্তুত হলে আমাকে জানাও",
+      },
+      setting: {
+        generalSetting: "সাধারণ সেটিংস",
+        theme: "থিম",
+        language: "ভাষা",
       },
     },
   },
