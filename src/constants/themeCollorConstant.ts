@@ -179,6 +179,20 @@ export const lightColors = {
   // Toggole button
   toggleTrack: "#4F46E5",
   toggoleThumb: "#FFFFFF",
+
+  // Maintainance
+  maintenanceOrbA: "#4F46E5",
+  maintenanceOrbB: "#F59E0B",
+  maintenanceOrbC: "#6366F1",
+  maintenanceStripeA: "rgba(245,158,11,0.22)",
+  maintenanceStripeB: "rgba(79,70,229,0.10)",
+  maintenanceBadgeBg: "rgba(245,158,11,0.08)",
+  maintenanceBadgeBorder: "rgba(245,158,11,0.35)",
+  maintenanceDot: "#F59E0B",
+  maintenanceGearPrimary: "rgba(79,70,229,0.22)",
+  maintenanceGearSecondary: "rgba(99,102,241,0.28)",
+  maintenanceGearTertiary: "rgba(79,70,229,0.18)",
+  maintenanceWrench: "rgba(245,158,11,0.75)",
 };
 
 export const darkColors = {
@@ -364,6 +378,20 @@ export const darkColors = {
   // Toggole button
   toggleTrack: "#6366F1",
   toggoleThumb: "#FFFFFF",
+
+  // Maintainance
+  maintenanceOrbA: "#6366F1",
+  maintenanceOrbB: "#FBBF24",
+  maintenanceOrbC: "#818CF8",
+  maintenanceStripeA: "rgba(251,191,36,0.18)",
+  maintenanceStripeB: "rgba(99,102,241,0.12)",
+  maintenanceBadgeBg: "rgba(251,191,36,0.08)",
+  maintenanceBadgeBorder: "rgba(251,191,36,0.3)",
+  maintenanceDot: "#FBBF24",
+  maintenanceGearPrimary: "rgba(99,102,241,0.25)",
+  maintenanceGearSecondary: "rgba(129,140,248,0.3)",
+  maintenanceGearTertiary: "rgba(99,102,241,0.2)",
+  maintenanceWrench: "rgba(251,191,36,0.75)",
 };
 
 export const themes = {

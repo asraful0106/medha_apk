@@ -15,6 +15,7 @@ import { SnackbarProvider } from "@/src/components/Snackbar";
 import { soundService } from "@/src/services/soundService";
 import SetupAppScreen from "@/src/pages/setupScreen/SetupScreen";
 import SplashScreen from "@/src/pages/splashScreen/SplashScreen";
+import UnderMaintenanceScreen from "@/src/pages/underMaintenance/UnderMaintenance";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constant
@@ -99,7 +100,12 @@ function AppShell() {
 
   // ✅ Show custom splash until ready AND 2s elapsed
   if (!canRenderApp) {
-    return <SplashScreen onFinish={() => setIsSplashAnimationFinised(true)} />;
+    return (
+      <>
+        <SplashScreen onFinish={() => setIsSplashAnimationFinised(true)} />
+        <StatusBar style={config.style} backgroundColor={colors.background} />
+      </>
+    );
   }
 
   return <SetupGate colors={colors} config={config} />;
@@ -125,6 +131,16 @@ function SetupGate({ colors, config }: SetupGateProps) {
     return (
       <>
         <SetupAppScreen onComplete={markSetupDone} />
+        <StatusBar style={config.style} backgroundColor={colors.background} />
+      </>
+    );
+  }
+
+  // Under Maintainence
+  if (false) {
+    return (
+      <>
+        <UnderMaintenanceScreen />
         <StatusBar style={config.style} backgroundColor={colors.background} />
       </>
     );

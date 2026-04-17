@@ -71,6 +71,14 @@ export const resources = {
         theme: "Theme",
         language: "Language",
       },
+      maintenance: {
+        badge: "Under Maintenance",
+        title: "We're Fixing\nThings Up",
+        subtitle:
+          "Our team is working hard to bring everything back online. Thanks for your patience!",
+        progressLabel: "Restoration in progress",
+        eta: "Back online",
+      },
     },
   },
 
@@ -133,6 +141,14 @@ export const resources = {
         generalSetting: "সাধারণ সেটিংস",
         theme: "থিম",
         language: "ভাষা",
+      },
+      maintenance: {
+        badge: "সার্ভিস আপডেট চলছে",
+        title: "আমরা সিস্টেম\nআপডেট করছি",
+        subtitle:
+          "আমাদের টিম দ্রুত কাজ করছে যাতে সবকিছু আবার স্বাভাবিকভাবে চালু করা যায়। একটু ধৈর্য ধরার জন্য ধন্যবাদ!",
+        progressLabel: "সার্ভিস পুনরুদ্ধার চলছে",
+        eta: "শিগগিরই আবার চালু হবে",
       },
     },
   },
