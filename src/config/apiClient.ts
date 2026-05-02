@@ -7,9 +7,22 @@ import axios, {
 import { envVars } from "./envVars";
 import { getDeviceId } from "../utils/getDeviceId";
 import { consoleDev } from "../utils/consoleDev";
+import { loadTokens, saveTokens } from "../storage/tokenStorage";
+import { CustomAlert } from "../components/CustomAlert";
 
 const BASE_URL = envVars.BASE_URL;
 
+// ─── Registered callbacks ─────────────────────────────────────────────────────
+// authStore calls registerForceLogout() once on boot.
+// apiClient never imports authStore — zero circular dependency.
+type ForceLogoutFn = () => void;
+let _forceLogout: ForceLogoutFn | null = null;
+
+export function registerForceLogout(fn: ForceLogoutFn) {
+  _forceLogout = fn;
+}
+
+// ─── Axios instance ───────────────────────────────────────────────────────────
 const apiClient: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: 15000,
@@ -19,7 +32,40 @@ const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Request Interceptor - Add Device ID
+// ─── Refresh mutex ────────────────────────────────────────────────────────────
+// Collapses concurrent 401s into a single refresh call.
+// All queued retries share the same promise and get the same new token.
+let _refreshPromise: Promise<string> | null = null;
+
+async function refreshAccessToken(): Promise<string> {
+  if (_refreshPromise) return _refreshPromise;
+
+  _refreshPromise = (async () => {
+    const { refreshToken } = await loadTokens();
+    if (!refreshToken) throw new Error("NO_REFRESH_TOKEN");
+
+    // Use bare axios — not apiClient — to avoid re-entering this interceptor
+    const res = await axios.post(
+      `${BASE_URL}/auth/reset-token`,
+      { refresh_token: refreshToken },
+      { headers: { "Content-Type": "application/json" }, timeout: 15000 },
+    );
+
+    const body = res.data;
+    if (!body?.success || !body?.data?.access_token) {
+      throw new Error("REFRESH_FAILED");
+    }
+
+    await saveTokens(body.data.access_token, body.data.refresh_token);
+    return body.data.access_token as string;
+  })().finally(() => {
+    _refreshPromise = null;
+  });
+
+  return _refreshPromise;
+}
+
+// ─── Request interceptor — attach Device ID ───────────────────────────────────
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const deviceId = await getDeviceId();
@@ -29,29 +75,55 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// Response Interceptor
-// - Server-side errors (4xx / 5xx): RESOLVED so each store action handles
-//   structured TApiErrorResponse itself.
-// - Network / timeout errors: THROWN so they bubble to the catch block.
+// ─── Response interceptor ─────────────────────────────────────────────────────
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError<any>) => {
-    consoleDev.log({ comingFrom: "apiClient.ts", line: 34 }, error);
+  async (error: AxiosError<any>) => {
+    consoleDev.log({ comingFrom: "apiClient.ts", line: 81 }, error);
 
-    // ── Server responded with an error status ────────────────────────────
-    // Resolve instead of reject so the store receives the full response
-    // and can extract the structured TApiErrorResponse from res.data.
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retried?: boolean;
+    };
+
+    // ── 401 → silent token refresh + retry ───────────────────────────────────
+    if (
+      error.response?.status === 401 &&
+      error.response?.data?.code === "AUTH_TOKEN_UNOTHORIZED" &&
+      !originalRequest._retried
+    ) {
+      originalRequest._retried = true;
+
+      try {
+        const newAccessToken = await refreshAccessToken();
+        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        return apiClient(originalRequest);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (_) {
+        // Refresh failed — delegate logout to whoever registered the handler.
+        // CustomAlert is imported directly; it has no store dependency.
+        _forceLogout?.();
+        CustomAlert.show({
+          title: "Session Expired",
+          message: "Please sign in again to continue.",
+          variant: "warning",
+          actions: [{ label: "OK", style: "default" }],
+        });
+        return Promise.reject(error);
+      }
+    }
+
+    // ── Other server errors: resolve so stores handle TApiErrorResponse ───────
     if (error.response) {
       return Promise.resolve(error.response);
     }
 
-    // ── No response received (network / timeout) ─────────────────────────
-    const isNetworkError =
+    // ── Network / timeout ─────────────────────────────────────────────────────
+    const msg = error.message?.toLowerCase() ?? "";
+    if (
       error.code === "ERR_NETWORK" ||
-      error.message.toLowerCase().includes("network") ||
-      error.message.toLowerCase().includes("failed");
-
-    if (isNetworkError) {
+      msg.includes("network") ||
+      msg.includes("failed")
+    ) {
       throw new Error(
         "Network request failed. Please check your internet connection and try again.",
       );

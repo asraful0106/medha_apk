@@ -2,7 +2,8 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import apiClient from "@/src/config/apiClient";
+import apiClient, { registerForceLogout } from "@/src/config/apiClient";
+import { saveTokens, loadTokens, deleteTokens } from "../storage/tokenStorage";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { consoleDev } from "../utils/consoleDev";
 import { TApiErrorResponse } from "../interfaces/apiResponse";
@@ -35,9 +36,6 @@ export interface RegisterPayload {
   password: string;
 }
 
-// ─── Helper ────────────────────────────────────────────────────────────────────
-// Converts network/timeout Error objects into a typed TApiErrorResponse.
-// status_code 0 = client-side error (no HTTP status available).
 function toApiError(err: unknown, fallbackMessage: string): TApiErrorResponse {
   if (err instanceof Error) {
     return {
@@ -83,6 +81,8 @@ interface AuthState {
   setError: (err: TApiErrorResponse | null) => void;
   setFlowEmail: (email: string) => void;
 
+  loadSecureTokens: () => Promise<void>;
+
   login: (email: string, password: string) => Promise<void>;
   register: (data: RegisterPayload) => Promise<void>;
   logout: () => Promise<void>;
@@ -124,7 +124,13 @@ export const useAuthStore = create<AuthState>()(
       setError: (err) => set({ error: err }),
       setFlowEmail: (email) => set({ flowEmail: email }),
 
-      // ─── Auth Actions ───────────────────────────────────────────────────
+      // ─── Rehydrate tokens from SecureStore into memory ────────────────────
+      loadSecureTokens: async () => {
+        const { accessToken, refreshToken } = await loadTokens();
+        set({ accessToken, refreshToken });
+      },
+
+      // ─── Auth Actions ─────────────────────────────────────────────────────
 
       login: async (email, password) => {
         set({ isLoading: true, error: null });
@@ -134,7 +140,6 @@ export const useAuthStore = create<AuthState>()(
             password,
           });
 
-          // ── Server-side error (4xx / 5xx resolved by apiClient) ──────────
           if (!res.success) {
             set({
               error: {
@@ -148,8 +153,9 @@ export const useAuthStore = create<AuthState>()(
             return;
           }
 
-          // ── Success ──────────────────────────────────────────────────────
           const userData = res.data;
+          await saveTokens(userData.access_token, userData.refresh_token);
+
           set({
             user: {
               id: userData.id,
@@ -167,7 +173,6 @@ export const useAuthStore = create<AuthState>()(
             flowEmail: email,
           });
         } catch (err) {
-          // Only network / timeout errors reach here
           set({ error: toApiError(err, "Login failed") });
           throw err;
         } finally {
@@ -228,6 +233,7 @@ export const useAuthStore = create<AuthState>()(
         } catch (_) {
           // Silently ignore logout errors
         } finally {
+          await deleteTokens();
           set({
             user: null,
             accessToken: null,
@@ -266,7 +272,6 @@ export const useAuthStore = create<AuthState>()(
                 status_code: res.status_code,
               },
             });
-            return;
           }
         } catch (err) {
           set({ error: toApiError(err, "Failed to request email OTP") });
@@ -432,13 +437,11 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "medha-auth",
       storage: createJSONStorage(() => AsyncStorage),
+      // Tokens intentionally excluded — they live in SecureStore only
       partialize: (state) => ({
         user: state.user,
-        accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
       }),
-
       onRehydrateStorage: () => (state, error) => {
         if (error) console.error("[authStore] Rehydration failed:", error);
         else if (state) state._setHasHydrated(true);
@@ -446,3 +449,10 @@ export const useAuthStore = create<AuthState>()(
     },
   ),
 );
+
+// ─── Register the force-logout callback with apiClient ────────────────────────
+// This runs once when authStore module is first imported.
+// apiClient holds only a plain function reference — no store import needed.
+registerForceLogout(() => {
+  useAuthStore.getState().logout();
+});
