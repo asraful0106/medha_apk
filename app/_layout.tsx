@@ -1,32 +1,35 @@
 // @/app/_layout.tsx
 import { ThemeProvider } from "@/src/hooks/theme/ThemeContext";
-import { Stack } from "expo-router";
+import {
+  Stack,
+  router,
+  useSegments,
+  useRootNavigationState,
+} from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import { useTheme } from "@/src/hooks/theme/ThemeContext";
-import {
-  LanguageProvider,
-  useLanguage,
-} from "@/src/hooks/language/LanguageContext";
-import { useEffect, useState, useCallback } from "react";
+import { LanguageProvider } from "@/src/hooks/language/LanguageContext";
+import { useEffect, useState, useRef, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { View, ActivityIndicator } from "react-native";
+
 import { CustomAlertProvider } from "@/src/components/CustomAlert";
 import { SnackbarProvider } from "@/src/components/Snackbar";
 import { soundService } from "@/src/services/soundService";
+
 import SetupAppScreen from "@/src/pages/setupScreen/SetupScreen";
 import SplashScreen from "@/src/pages/splashScreen/SplashScreen";
 import UnderMaintenanceScreen from "@/src/pages/underMaintenance/UnderMaintenance";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Constant
-// ─────────────────────────────────────────────────────────────────────────────
-const SETUP_DONE_KEY = "medha_setup_done";
+import { useAuthStore } from "@/src/store/authStore";
+import { useAppReady } from "@/src/hooks/useAppReady";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Hook: reads AsyncStorage to decide whether first-time setup is needed.
-// ─────────────────────────────────────────────────────────────────────────────
+// Constants
+const SETUP_DONE_KEY = "medha_setup_done";
+const SPLASH_MIN_DURATION_MS = 1800;
+
 function useSetupRequired() {
-  // null = still loading, true = needs setup, false = already done
   const [setupRequired, setSetupRequired] = useState<boolean | null>(null);
 
   const checkSetup = useCallback(async () => {
@@ -34,8 +37,7 @@ function useSetupRequired() {
       const value = await AsyncStorage.getItem(SETUP_DONE_KEY);
       setSetupRequired(value === null);
     } catch (err) {
-      console.error("[useSetupRequired] AsyncStorage read failed:", err);
-      // Default to showing setup on error so the user can configure their preferences
+      console.error("[useSetupRequired] Failed:", err);
       setSetupRequired(true);
     }
   }, []);
@@ -45,7 +47,8 @@ function useSetupRequired() {
       await AsyncStorage.setItem(SETUP_DONE_KEY, "1");
       setSetupRequired(false);
     } catch (err) {
-      console.error("[useSetupRequired] AsyncStorage write failed:", err);
+      console.error("[useSetupRequired] Mark done failed:", err);
+      setSetupRequired(false);
     }
   }, []);
 
@@ -57,11 +60,12 @@ function useSetupRequired() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AppShell — rendered once fonts are loaded
+// Main AppShell
 // ─────────────────────────────────────────────────────────────────────────────
 function AppShell() {
   const { colors, config } = useTheme();
-  const { isHydrated } = useLanguage();
+  const { isReady: isAppReady } = useAppReady();
+  const { setupRequired, markSetupDone } = useSetupRequired();
 
   const [fontsLoaded, fontError] = useFonts({
     SansFlex: require("../assets/fonts/SansFlex.ttf"),
@@ -69,102 +73,144 @@ function AppShell() {
     Noto: require("../assets/fonts/Noto.ttf"),
   });
 
-  // ✅ Minimum splash time (2s)
-  const [minTimePassed, setMinTimePassed] = useState(false);
+  const [minSplashTimePassed, setMinSplashTimePassed] = useState(false);
+  const [splashAnimationDone, setSplashAnimationDone] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setMinTimePassed(true);
-    }, 2000);
-
+    const timer = setTimeout(
+      () => setMinSplashTimePassed(true),
+      SPLASH_MIN_DURATION_MS,
+    );
     return () => clearTimeout(timer);
   }, []);
 
-  // Optional: log font errors
-  useEffect(() => {
-    if (fontError) {
-      console.warn("Font loading error:", fontError);
+  const phase = (() => {
+    if (
+      !fontsLoaded ||
+      fontError ||
+      !isAppReady ||
+      !minSplashTimePassed ||
+      !splashAnimationDone ||
+      setupRequired === null
+    ) {
+      return "splash";
     }
-  }, [fontError]);
+    if (setupRequired) return "setup";
+    if (false) return "maintenance"; // Toggle for maintenance mode
+    return "app";
+  })();
 
-  useEffect(() => {
-    soundService.init();
-  }, []);
+  const statusBar = (
+    <StatusBar style={config.style} backgroundColor={colors.background} />
+  );
 
-  const isAppReady = Boolean(isHydrated && fontsLoaded && !fontError);
-
-  const [isSplashAnimationFinised, setIsSplashAnimationFinised] =
-    useState<boolean>(false);
-
-  const canRenderApp = isAppReady && minTimePassed && isSplashAnimationFinised;
-
-  // ✅ Show custom splash until ready AND 2s elapsed
-  if (!canRenderApp) {
+  if (phase === "splash") {
     return (
       <>
-        <SplashScreen onFinish={() => setIsSplashAnimationFinised(true)} />
-        <StatusBar style={config.style} backgroundColor={colors.background} />
+        <SplashScreen onFinish={() => setSplashAnimationDone(true)} />
+        {statusBar}
       </>
     );
   }
 
-  return <SetupGate colors={colors} config={config} />;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// SetupGate — shows the preferences onboarding screen on first launch,
-//             then routes to the main navigator.
-// ─────────────────────────────────────────────────────────────────────────────
-interface SetupGateProps {
-  colors: ReturnType<typeof useTheme>["colors"];
-  config: ReturnType<typeof useTheme>["config"];
-}
-
-function SetupGate({ colors, config }: SetupGateProps) {
-  const { setupRequired, markSetupDone } = useSetupRequired();
-
-  // Still reading AsyncStorage
-  if (setupRequired === null) return null;
-
-  // Show preferences onboarding on first launch
-  if (setupRequired) {
+  if (phase === "setup") {
     return (
       <>
         <SetupAppScreen onComplete={markSetupDone} />
-        <StatusBar style={config.style} backgroundColor={colors.background} />
+        {statusBar}
       </>
     );
   }
 
-  // Under Maintainence
-  if (false) {
+  if (phase === "maintenance") {
     return (
       <>
         <UnderMaintenanceScreen />
-        <StatusBar style={config.style} backgroundColor={colors.background} />
+        {statusBar}
       </>
     );
   }
 
-  // Normal app flow
+  // Final App Phase — Protected Entry Point
   return (
     <>
       <Stack
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: colors.background },
+          animation: "fade",
         }}
       >
+        <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tab)" />
         <Stack.Screen name="(othersPage)" />
       </Stack>
-      <StatusBar style={config.style} backgroundColor={colors.background} />
+
+      {statusBar}
+      <RootAuthGuard />
     </>
   );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Root layout
+// ROOT LEVEL AUTH GUARD — Most Reliable Way
+// ─────────────────────────────────────────────────────────────────────────────
+function RootAuthGuard() {
+  const { isHydrated, isAuthenticated, user } = useAuthStore();
+  const segments = useSegments();
+  const rootNavigationState = useRootNavigationState();
+  const hasDecided = useRef(false);
+
+  useEffect(() => {
+    if (!isHydrated || !rootNavigationState?.key || hasDecided.current) {
+      return;
+    }
+
+    hasDecided.current = true;
+
+    const isInAuthGroup = segments[0] === "(auth)";
+
+    if (!isAuthenticated) {
+      // Not logged in → go to login
+      if (!isInAuthGroup) {
+        router.replace("/(auth)/login");
+      }
+    } else if (user && !user.isEmailVerified) {
+      // Logged in but email not verified → go to email verification
+      if (!isInAuthGroup || segments[1] !== "email-verify-otp") {
+        router.replace("/(auth)/email-verify-otp");
+      }
+    }
+    // Else: Fully authenticated → allow access to (tab) or other routes
+  }, [
+    isHydrated,
+    isAuthenticated,
+    user?.isEmailVerified,
+    segments,
+    rootNavigationState?.key,
+  ]);
+
+  // Critical: Block rendering of any content until auth decision is made
+  if (!isHydrated) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#fff",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
+
+  return null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Root Layout
 // ─────────────────────────────────────────────────────────────────────────────
 export default function RootLayout() {
   return (

@@ -14,18 +14,18 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nextin.medha-apk"
     },
     "android": {
-      // "adaptiveIcon": {
-      //   "backgroundColor": "#E6F4FE",
-      //   "foregroundImage": "./assets/images/android-icon-foreground.png",
-      //   "backgroundImage": "./assets/images/android-icon-background.png",
-      //   "monochromeImage": "./assets/images/android-icon-monochrome.png"
-      // },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.nextin.medha_apk"
+      "package": "com.nextin.medha_apk",
+      "usesCleartextTraffic": true,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "output": "static",
@@ -47,7 +47,8 @@
       ],
       "expo-audio",
       "./withTabletFullscreen",
-      "./withBluetoothPermissions"
+      "./withBluetoothPermissions",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,

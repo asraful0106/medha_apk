@@ -23,6 +23,7 @@ import {
   NavItem,
 } from "@/src/components/AdaptiveNavigation";
 import { NAV_CONFIG, TITLE_CONFIG } from "@/src/constants/navTitleConfig";
+import { useAuthStore } from "@/src/store/authStore";
 
 // Routes that should NOT show the tab bar on mobile
 const HIDDEN_ON_MOBILE = ["setting", "profile"];
@@ -95,6 +96,13 @@ export default function TabLayout() {
 
   // Only show extra items on tablet
   const extraNavItems = isTablet ? EXTRA_NAV_ITEMS : [];
+
+  // Auth Gurd
+  const { isAuthenticated, isHydrated } = useAuthStore();
+
+  if (!isHydrated || !isAuthenticated) {
+    return null;
+  }
 
   return (
     <View style={styles.root}>

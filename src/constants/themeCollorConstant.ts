@@ -233,7 +233,7 @@ export const darkColors = {
   warningDim: "#431407",
 
   info: "#38BDF8",
-  infoDim: "#082F49",
+  infoLight: "#082F49",
   infoText: "#38BDF8",
 
   freeLesson: "#1E1B4B",
