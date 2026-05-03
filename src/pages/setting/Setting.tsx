@@ -14,12 +14,24 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTranslation } from "react-i18next";
 import { ThemeToggle } from "@/src/pages/setting/components/ThemeToggle";
 import { LanguagePillToggle } from "@/src/pages/setting/components/LanguagePillToggle";
+import { PlatformPressable } from "@react-navigation/elements";
+import { useAuthStore } from "@/src/store/authStore";
+import { useRouter } from "expo-router";
+import { LoadingScreen } from "@/src/components/LoadingOverlay";
+import { FontAwesome6 } from "@expo/vector-icons";
 
 export default function Settings() {
   const { colors, changeTheme, themeName } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { t } = useTranslation();
-  const { changeLanguage, lang } = useLanguage()
+  const { changeLanguage, lang } = useLanguage();
+  const router = useRouter();
+  const { isLoading: isLogoutLoading, logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    router.replace("/(auth)/login");
+  };
 
   return (
     <>
@@ -109,8 +121,50 @@ export default function Settings() {
             </View>
           </View>
 
+          {/* LogoutButton */}
+          <PlatformPressable
+            onPress={() => {
+              handleLogout();
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingVertical: moderateScale(16, 0.01),
+                backgroundColor: colors.activeButton.primary.bg,
+                borderRadius: moderateScale(12, 0.01),
+                marginTop: moderateScale(10, 0.01)
+              }}
+            >
+              <StyledText
+                style={{
+                  color: colors.activeButton.primary.text,
+                  fontWeight: "700",
+                }}
+              >
+                {t("login.logout")}
+              </StyledText>
+            </View>
+          </PlatformPressable>
+
           <View style={{ marginVertical: 15 }} />
         </View>
+
+        {/* Loading overlay */}
+        <LoadingScreen
+          visible={isLogoutLoading}
+          icon={
+            <FontAwesome6
+              name="graduation-cap"
+              size={moderateScale(16, 0.01)}
+              color="white"
+            />
+          }
+          backdrop={false}
+          // card={false}
+        />
       </KeyboardAwareScrollView>
     </>
   );

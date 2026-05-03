@@ -1,5 +1,5 @@
 // @/src/screens/setup/SetupBusinessScreen.tsx
-import React, { useState, useCallback, useMemo, useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import {
   View,
   TouchableOpacity,

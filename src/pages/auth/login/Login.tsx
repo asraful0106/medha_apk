@@ -121,7 +121,8 @@ export default function Login() {
         // Absolute fallback (should not normally reach here)
         CustomAlert.show({
           title: "Connection Error",
-          message: err.message || t("errors.something_went_wrong_please_try_again"),
+          message:
+            err.message || t("errors.something_went_wrong_please_try_again"),
           variant: "warning",
         });
       }

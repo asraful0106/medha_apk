@@ -70,6 +70,7 @@ export const resources = {
         password_is_required: "Password is required",
         password_must_be_at_least_8_characters:
           "Password must be at least 8 characters",
+        logout: "Logout",
       },
       comingSoon: {
         badge: "Coming Soon",
@@ -171,6 +172,7 @@ export const resources = {
         password_is_required: "পাসওয়ার্ড আবশ্যক",
         password_must_be_at_least_8_characters:
           "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে",
+        logout: "লগআউট",
       },
       comingSoon: {
         badge: "শীঘ্রই আসছে",

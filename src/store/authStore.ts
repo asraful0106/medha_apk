@@ -231,6 +231,7 @@ export const useAuthStore = create<AuthState>()(
             });
           }
         } catch (_) {
+          consoleDev.log({comingFrom:"authStore.ts", line: 255}, _)
           // Silently ignore logout errors
         } finally {
           await deleteTokens();

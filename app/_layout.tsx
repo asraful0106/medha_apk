@@ -24,6 +24,7 @@ import UnderMaintenanceScreen from "@/src/pages/underMaintenance/UnderMaintenanc
 
 import { useAuthStore } from "@/src/store/authStore";
 import { useAppReady } from "@/src/hooks/useAppReady";
+import { LoadingOverlayProvider } from "@/src/components/LoadingOverlay";
 
 // Constants
 const SETUP_DONE_KEY = "medha_setup_done";
@@ -217,9 +218,11 @@ export default function RootLayout() {
     <ThemeProvider>
       <LanguageProvider>
         <SnackbarProvider>
-          <CustomAlertProvider>
-            <AppShell />
-          </CustomAlertProvider>
+          <LoadingOverlayProvider>
+            <CustomAlertProvider>
+              <AppShell />
+            </CustomAlertProvider>
+          </LoadingOverlayProvider>
         </SnackbarProvider>
       </LanguageProvider>
     </ThemeProvider>
