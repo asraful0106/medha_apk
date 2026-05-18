@@ -133,6 +133,8 @@ export const useAuthStore = create<AuthState>()(
       // ─── Auth Actions ─────────────────────────────────────────────────────
 
       login: async (email, password) => {
+        const { isLoading } = get();
+        if (isLoading) return; // Prevent multiple simultaneous calls
         set({ isLoading: true, error: null });
         try {
           const { data: res } = await apiClient.post("/auth/login", {
@@ -181,6 +183,8 @@ export const useAuthStore = create<AuthState>()(
       },
 
       register: async (payload) => {
+        const { isLoading } = get();
+        if (isLoading) return; // Prevent multiple simultaneous calls
         set({ isLoading: true, error: null });
         try {
           const { data: res } = await apiClient.post("/users", payload);
@@ -231,7 +235,7 @@ export const useAuthStore = create<AuthState>()(
             });
           }
         } catch (_) {
-          consoleDev.log({comingFrom:"authStore.ts", line: 255}, _)
+          consoleDev.log({ comingFrom: "authStore.ts", line: 255 }, _);
           // Silently ignore logout errors
         } finally {
           await deleteTokens();
@@ -250,7 +254,9 @@ export const useAuthStore = create<AuthState>()(
       },
 
       requestEmailOtp: async () => {
-        const { accessToken } = get();
+        const { accessToken, isLoading } = get();
+        if (isLoading) return; // Prevent multiple simultaneous calls
+        console.log("Calling the api for request email otp");
         set({ isLoading: true, error: null });
         try {
           const { data: res } = await apiClient.post(
@@ -283,6 +289,8 @@ export const useAuthStore = create<AuthState>()(
       },
 
       verifyEmailOtp: async (otp: string) => {
+        const { isLoading } = get();
+        if (isLoading) return; // Prevent multiple simultaneous calls
         set({ isLoading: true, error: null });
         try {
           const { data: res } = await apiClient.post("/auth/verify-email-otp", {
@@ -290,6 +298,7 @@ export const useAuthStore = create<AuthState>()(
           });
 
           if (!res.success) {
+            // console.log("# ", res);
             set({
               error: {
                 code: res.code,
@@ -302,7 +311,8 @@ export const useAuthStore = create<AuthState>()(
             return;
           }
 
-          set({ emailVerifyToken: res.data?.token ?? null });
+          // console.log("###1: ", res.data);
+          set({ emailVerifyToken: res.data?.email_verify_token ?? null });
         } catch (err) {
           set({ error: toApiError(err, "OTP verification failed") });
           throw err;
@@ -312,12 +322,14 @@ export const useAuthStore = create<AuthState>()(
       },
 
       confirmEmailVerified: async () => {
+        const { isLoading, emailVerifyToken } = get();
+        console.log("###2: ", emailVerifyToken);
+        if (isLoading) return; // Prevent multiple simultaneous calls
         set({ isLoading: true, error: null });
         try {
-          const { data: res } = await apiClient.post(
-            "/auth/confirm-email-verified",
-            {},
-          );
+          const { data: res } = await apiClient.post("/auth/verify-email", {
+            email_verify_token: emailVerifyToken,
+          });
 
           if (!res.success) {
             set({
@@ -344,6 +356,8 @@ export const useAuthStore = create<AuthState>()(
       },
 
       requestPasswordReset: async (email: string) => {
+        const { isLoading } = get();
+        if (isLoading) return; // Prevent multiple simultaneous calls
         set({ isLoading: true, error: null });
         try {
           const { data: res } = await apiClient.post("/auth/forgot-password", {
@@ -373,6 +387,8 @@ export const useAuthStore = create<AuthState>()(
       },
 
       verifyResetCode: async (otp: string) => {
+        const { isLoading } = get();
+        if (isLoading) return; // Prevent multiple simultaneous calls
         set({ isLoading: true, error: null });
         try {
           const { data: res } = await apiClient.post(
@@ -403,6 +419,8 @@ export const useAuthStore = create<AuthState>()(
       },
 
       resetPassword: async (newPassword: string, confirmPassword: string) => {
+        const { isLoading } = get();
+        if (isLoading) return; // Prevent multiple simultaneous calls
         set({ isLoading: true, error: null });
         try {
           const { resetToken } = get();

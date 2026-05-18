@@ -4,7 +4,7 @@
     "slug": "medha_apk",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/app_icon/siddhanto_icon.png",
     "scheme": "medhaapk",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -29,7 +29,7 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/app_icon/siddhanto_icon.png"
     },
     "plugins": [
       "expo-router",

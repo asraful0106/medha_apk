@@ -9,6 +9,7 @@ import { getDeviceId } from "../utils/getDeviceId";
 import { consoleDev } from "../utils/consoleDev";
 import { loadTokens, saveTokens } from "../storage/tokenStorage";
 import { CustomAlert } from "../components/CustomAlert";
+import { router } from "expo-router";
 
 const BASE_URL = envVars.BASE_URL;
 
@@ -42,6 +43,7 @@ async function refreshAccessToken(): Promise<string> {
 
   _refreshPromise = (async () => {
     const { refreshToken } = await loadTokens();
+    // console.log("RefreshToken: ", refreshToken);
     if (!refreshToken) throw new Error("NO_REFRESH_TOKEN");
 
     // Use bare axios — not apiClient — to avoid re-entering this interceptor
@@ -68,8 +70,17 @@ async function refreshAccessToken(): Promise<string> {
 // ─── Request interceptor — attach Device ID ───────────────────────────────────
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
+    // Attach device id
     const deviceId = await getDeviceId();
     config.headers["X-Device-ID"] = deviceId || "unknown";
+
+    // Attach accessToken
+    const { accessToken } = await loadTokens();
+    // console.log("AccessToken: ", accessToken);
+    if (accessToken) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+
     return config;
   },
   (error) => Promise.reject(error),
@@ -85,10 +96,16 @@ apiClient.interceptors.response.use(
       _retried?: boolean;
     };
 
+    // console.log("Error: ", error);
+    // console.log("Response: ", error.response?.status);
+    // console.log("Response: ", error.response?.data?.code);
+    // console.log("Response: ", !originalRequest._retried);
+
     // ── 401 → silent token refresh + retry ───────────────────────────────────
     if (
       error.response?.status === 401 &&
-      error.response?.data?.code === "AUTH_TOKEN_UNOTHORIZED" &&
+      (error.response?.data?.code === "AUTH_TOKEN_UNOTHORIZED" ||
+        error.response?.data?.code === "AUTH_TOKEN_INVALID") &&
       !originalRequest._retried
     ) {
       originalRequest._retried = true;
@@ -97,7 +114,7 @@ apiClient.interceptors.response.use(
         const newAccessToken = await refreshAccessToken();
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         return apiClient(originalRequest);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_) {
         // Refresh failed — delegate logout to whoever registered the handler.
         // CustomAlert is imported directly; it has no store dependency.
@@ -106,7 +123,15 @@ apiClient.interceptors.response.use(
           title: "Session Expired",
           message: "Please sign in again to continue.",
           variant: "warning",
-          actions: [{ label: "OK", style: "default" }],
+          actions: [
+            {
+              label: "OK",
+              style: "default",
+              onPress: () => {
+                router.replace("/(auth)/login");
+              },
+            },
+          ],
         });
         return Promise.reject(error);
       }

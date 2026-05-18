@@ -1,7 +1,7 @@
 // app/(auth)/_layout.tsx
 import { Stack, router } from "expo-router";
-import { useEffect } from "react";
-import { useAuthStore } from "@/src/store/authStore";
+// import { useEffect } from "react";
+// import { useAuthStore } from "@/src/store/authStore";
 
 /**
  * Auth layout — wraps all unauthenticated screens.
@@ -9,13 +9,17 @@ import { useAuthStore } from "@/src/store/authStore";
  * redirect them away to the main app.
  */
 export default function AuthLayout() {
-  const { isAuthenticated, isEmailVerified } = useAuthStore();
+  // const { isAuthenticated, user } = useAuthStore();
+  // // console.log("User: ", user);
+  // // console.log("isEmailVerified: ", user?.isEmailVerified);
 
-  useEffect(() => {
-    if (isAuthenticated && isEmailVerified) {
-      router.replace("/(tab)");
-    }
-  }, [isAuthenticated, isEmailVerified]);
+  // useEffect(() => {
+  //   // console.log("*User: ", user);
+  //   // console.log("*isEmailVerified: ", user?.isEmailVerified);
+  //   if (isAuthenticated && user?.isEmailVerified) {
+  //     router.replace("/(tab)");
+  //   }
+  // }, [isAuthenticated, user?.isEmailVerified]);
 
   return (
     <Stack

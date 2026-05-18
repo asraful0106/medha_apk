@@ -74,7 +74,7 @@ function validatePassword(password: string) {
 export default function Login() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { login, isLoading } = useAuthStore();
+  const { login, isLoading, user } = useAuthStore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -109,7 +109,13 @@ export default function Login() {
       }
 
       // No error in store → successful login
-      router.replace("/(tab)");
+      // After successful login in authStore.login()
+      if (user?.isEmailVerified) {
+        router.replace("/(tab)");
+      } else {
+        router.replace("/(auth)/email-verify-otp");
+      }
+      // router.replace("/(tab)");
     } catch (err: any) {
       // Only network / timeout errors throw — the store also holds the error
       // object, so read from there to keep the alert consistent.

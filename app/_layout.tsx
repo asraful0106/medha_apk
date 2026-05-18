@@ -160,29 +160,47 @@ function RootAuthGuard() {
   const { isHydrated, isAuthenticated, user } = useAuthStore();
   const segments = useSegments();
   const rootNavigationState = useRootNavigationState();
+
+  // Reset decision when auth state changes significantly
   const hasDecided = useRef(false);
 
   useEffect(() => {
-    if (!isHydrated || !rootNavigationState?.key || hasDecided.current) {
+    if (!isHydrated || !rootNavigationState?.key) {
       return;
     }
 
-    hasDecided.current = true;
-
     const isInAuthGroup = segments[0] === "(auth)";
+    const currentScreen = segments[1];
 
+    // ─── Not authenticated ─────────────────────
     if (!isAuthenticated) {
-      // Not logged in → go to login
       if (!isInAuthGroup) {
+        console.log("🔒 Not authenticated → redirect to login");
         router.replace("/(auth)/login");
+        hasDecided.current = true;
       }
-    } else if (user && !user.isEmailVerified) {
-      // Logged in but email not verified → go to email verification
-      if (!isInAuthGroup || segments[1] !== "email-verify-otp") {
+      return;
+    }
+
+    // ─── Authenticated but email NOT verified ─────
+    if (user && !user.isEmailVerified) {
+      const shouldBeInVerify =
+        isInAuthGroup && currentScreen === "email-verify-otp";
+
+      if (!shouldBeInVerify) {
+        console.log("📧 Email not verified → redirect to email-verify-otp");
         router.replace("/(auth)/email-verify-otp");
       }
+      return;
     }
-    // Else: Fully authenticated → allow access to (tab) or other routes
+
+    // ─── Fully authenticated (email verified) ─────
+    if (isInAuthGroup) {
+      console.log("✅ Fully authenticated → redirect to tab");
+      router.replace("/(tab)");
+    }
+
+    hasDecided.current = true; // Only mark as decided when we're in the correct final state
   }, [
     isHydrated,
     isAuthenticated,
@@ -191,7 +209,7 @@ function RootAuthGuard() {
     rootNavigationState?.key,
   ]);
 
-  // Critical: Block rendering of any content until auth decision is made
+  // Show loader until hydrated
   if (!isHydrated) {
     return (
       <View
